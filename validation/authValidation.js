@@ -39,18 +39,25 @@ export const userLoginSchema = Joi.object({
       "string.pattern.base": "Password must be 8-30 alphanumeric characters",
       "any.required": "Password is required",
     }),
+  role: Joi.string().valid("job_seeker", "employer").required().messages({
+    "string.base": "Role must be a string",
+    "any.only": "Role must be either 'job_seeker' or 'employer'",
+    "any.required": "Role is required",
+  }),
 });
 
-// Validate data against the schema
-// const userData = {
-//   username: "johndoe",
-//   password: "password123",
-//   role: "job_seeker",
-// };
+export const loginValidation = (req, res, next) => {
+  const { error } = userLoginSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+  next();
+};
 
-// const validationResult = userSignupSchema.validate(userData);
-// if (validationResult.error) {
-//   console.error("Validation error:", validationResult.error.message);
-// } else {
-//   console.log("Valid data:", validationResult.value);
-// }
+export const signupValidation = (req, res, next) => {
+  const { error } = userSignupSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+  next();
+};

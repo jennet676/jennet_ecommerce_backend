@@ -1,95 +1,160 @@
-POST http://localhost:3000/api/example HTTP/1.1
-content-type: application/json
-
-{
-    "name": "sample",
-    "time": "Wed, 21 Oct 2015 18:27:50 GMT"
-}
-
-###
-
-DELETE http://localhost:4000/api/user/123
-content-type: application/json
-
-{
-    "reason": "User requested deletion"
-}
-
-###
-
-##############################################
-
-#################### TEST ####################
-
-##############################################
-
-POST https://jsonplaceholder.typicode.com/posts
-Content-Type: application/json
-
-{
-    "title": "Test Post",
-    "body": "This is a test post.",
-    "userId": 123
-}
-
-##############################################
-
-############### SIGN UP/ LOGIN ###############
-
-##############################################
 
 @jobSeeker = "job_seeker"
 @employer = "employer"
+@serdar20_job_seeker_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJzZXJkYXIyMCIsInJvbGUiOiJqb2Jfc2Vla2VyIiwiaWF0IjoxNzUwNzQ5MTAwfQ.oK0uyR0cVkEOjHWWleSUQ9bBeY1cbkg2hRvo-l5aVJo
+@serdar23_employer_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsIm5hbWUiOiJzZXJkYXIyMyIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc1MDc0Nzc2NX0.Kn5Hjsaz5Cffyjp3druaJiqGJPirPze5TntKLI3cWoc
+@serdar25_job_seeker_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzIsIm5hbWUiOiJzZXJkYXIyNSIsInJvbGUiOiJqb2Jfc2Vla2VyIiwiaWF0IjoxNzUwNzUwMzE5fQ.MAjOTK6KXq80iNzfy9uS5Pqnq7sBbw_U6okRKiwaF08
+@serdar27_job_seeker_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsIm5hbWUiOiJzZXJkYXIyNyIsInJvbGUiOiJqb2Jfc2Vla2VyIiwiaWF0IjoxNzUwNzUwNDAyfQ.bR1-aEVXqrGZKhyN5QyLy5pT-D0q_omkcDtZWlu9nQs
+@serdar28_job_seeker_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzQsIm5hbWUiOiJzZXJkYXIyOCIsInJvbGUiOiJqb2Jfc2Vla2VyIiwiaWF0IjoxNzUwODI4NzAxfQ.ACjTMxpmP105e-K-FDrEsZio5dHS7JR0I_w7Lb9ssfY
 
-POST http://localhost:5173/signup/api
+
+##############################################
+############### SIGN UP/ LOGIN ###############
+##############################################
+POST {{baseUrlAUTH}}/auth/api/signup
 Content-Type: application/json
 
 {
-    "username": "serdar2",
-    "password": "121212",
+    "username": "serdar28",
+    "password": "121212121",
     "role": "job_seeker"
 }
 
+//✅username unique
 ###
 
-POST http://localhost:5173/login/api
-content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNlcmRhcjEiLCJyb2xlIjoiam9iX3NlZWtlciIsImlhdCI6MTc1MDAwNTU3MX0.GL064ZYQhdyaGdJd2A92cqUry1AVvD6m-lRdEZ1EZ3o
+POST {{baseUrlAUTH}}/auth/api/login
+Content-Type: application/json
 
 {
-    "username": "serdar2",
-    "password": "121212"
+    "username": "serdar28",
+    "password": "121212121",
+    "role": "job_seeker"
+}
+//✅login
+############################################
+############# EMPLOYER ACTIONS #############
+############################################
+
+
+POST {{baseUrlSERVER}}/jobs/api/employer/create-job
+Content-Type: application/json
+Authorization: Bearer {{serdar23_employer_token}}
+
+{
+    "title": "frontend1",
+    "description": "description",
+    "company": "company",
+    "location": "location",
+    "category": "category",
+    "salary_range": "salary_range",
+    "employment_type": "employment_type",
+    "is_active": true
 }
 
-#############################################
+//job döretýär;
+//✅
+//✅meňzeş title we description bolsa döredenok
+//✅employer job goşýar
+//✅job_seeker goşup bilenok :'Access denied. Only employers can create jobs'
+###
 
+GET {{baseUrlSERVER}}/jobs/api/employer/jobs?title=back
+Content-Type: application/json
+Authorization: Bearer {{serdar23_employer_token}}
+
+//✅employer öz job-laryny görýär;
+//spesifik employer-iň job-laryny getirip  berýär  
+//✅-req.body-ny boş edip ugratmaly! -buny çözmesegä bolanok
+//✅-serdar21 employer üçin job ýok diýip görkezýär
+//✅-employer bolsa näme!
+//✅-access token ugratmasa näme?-şu wagtlykça bulary tapman diňeje birinjini düzedäýinmi?
+//✅
+
+//✅filter-ýöne nähili test etmeli!
+###
+
+PUT {{baseUrlSERVER}}/jobs/api/employer/update-job/432
+Content-Type: application/json
+Authorization: Bearer {{serdar23_employer_token}}
+
+{
+    "title": "frontend3",
+    "description": "description",
+    "company": "company",
+    "location": "location",
+    "category": "category",
+    "salary_range": "salary_range",
+    "employment_type": "employment_type",
+    "is_active": true
+}
+ 
+//✅job update edýär;
+
+###
+
+DELETE {{baseUrlSERVER}}/jobs/api/employer/delete-job/432
+Content-Type: application/json
+Authorization: Bearer {{serdar23_employer_token}}
+
+//✅job delete edýär;-egerde favorite edilen bolsa düýbünden pozmak nädogry-favorite-de eýýäm ol maglumat ulanylýär we .. şonuň üçin  is_active=false etmeli
+
+###
+GET {{baseUrlSERVER}}/jobs/api/employer/applyed-users/432
+Content-Type: application/json
+Authorization: Bearer {{serdar23_employer_token}}
+//✅job_seeker-leri görüp bilýär
+//✅-pagination
+//✅sortlamak wagt goşmalymyka onda?-soňky apply edenler diýip
+
+//serdar7 job goşmaly soňra şol işe ikisi apply etmelimi?
+
+
+
+#############################################
+############# jobSeeker ACTIONS #############
+#############################################
+GET {{baseUrlSERVER}}/jobs/api/job-seeker/jobs
+//✅job-seeker  job-lary görýär;
+//✅pagination
+//✅filter
+
+
+###
+GET {{baseUrlSERVER}}/jobs/api/job-seeker/jobs/432
+//✅220 id-li işi görüp bilýär
+###
+POST {{baseUrlSERVER}}/jobs/api/job-seeker/applying-job/431
+Content-Type: application/json
+Authorization: Bearer {{serdar25_job_seeker_token}}
+
+//✅ apply etýär :220 id-li job-y apply etdi!
+//✅ user şol bir işe kän gezek apply etmeli dälmi?
+//job id boýunça employer-i tutmakçy!
+
+###
+GET {{baseUrlSERVER}}/jobs/api/job-seeker/get-all-applyed-jobs
+Authorization: Bearer {{serdar25_job_seeker_token}}
+
+//✅user ähli apply eden işlerini görüp bilýär
+//✅pagination
+//✅filter
+
+###
+DELETE {{baseUrlSERVER}}/jobs/api/job-seeker/delete-applyed-job/220
+Content-Type: application/json
+Authorization: Bearer {{serdar25_job_seeker_token}}
+
+//✅apply edilen işi delete edip bilýärmi?
+
+
+#############################################
 #################### END ####################
-
 #############################################
 
-GET http://localhost:3000/birds/about HTTP/1.1
 
 
 
 
-###
-POST http://localhost:5173/api/signup
-content-type: application/json
-
-{
-    "username": "serdar2",
-    "password": "121212",
-    "role": "job_seeker"
-}
 
 
-
-###
-POST http://localhost:5173/api/login
-content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNlcmRhcjIiLCJyb2xlIjoiam9iX3NlZWtlciIsImlhdCI6MTc1MDAwNTU3MX0.GL064ZYQhdyaGdJd2A92cqUry1AVvD6m-lRdEZ1EZ3o
-
-{
-    "username": "serdar2",
-    "password": "121212"
-}

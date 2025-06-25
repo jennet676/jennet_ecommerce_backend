@@ -6,26 +6,16 @@ import jwt from "jsonwebtoken";
 
 export async function signupUser(username, password, role) {
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     const checkUserQueryResult = await db.query(
       "select * from users where username =$1",
       [username]
     );
 
-    if (checkUserQueryResult.rows.length != 0) {
-      for (const sameNamedPerson of checkUserQueryResult.rows) {
-        const isMatch = await bcrypt.compare(
-          password,
-          sameNamedPerson.password_hash
-        );
-        console.log("isMatch", isMatch);
-        if (isMatch) {
-          return { success: false, message: "Alredy registered user" };
-        }
-      }
+    if (checkUserQueryResult.rows.length > 0) {
+      return { success: false, message: "username is used" };
     }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const sql =
       "INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3)";
     await db.query(sql, [username, hashedPassword, role]);
@@ -39,23 +29,23 @@ export async function signupUser(username, password, role) {
   }
 }
 
-export async function loginUser(username, password) {
+export async function loginUser(username, password, role) {
   try {
     const query = "SELECT * FROM users WHERE username = $1";
     const values = [username];
     const result = await db.query(query, values);
 
     if (result.rows.length === 0) {
-      return { success: false, message: "Invalid username or password." };
+      return { success: false, message: "Invalid credentials." };
     }
 
     const users = result.rows;
     for (const user of users) {
       const isMatch = await bcrypt.compare(password, user.password_hash);
 
-      if (isMatch) {
+      if (isMatch && user.role === role) {
         const token = jwt.sign(
-          { id: user.id, name: user.name, role: user.role },
+          { id: user.id, name: user.username, role: user.role },
           process.env.VITE_JWT_SECRET
         );
         return {
@@ -63,14 +53,13 @@ export async function loginUser(username, password) {
           token,
           details: {
             id: user.id,
-            name: user.name,
+            name: user.username,
             role: user.role,
           },
         };
       }
     }
-    return { success: false, message: "Invalid username or password." };
-   
+    return { success: false, message: "Invalid credentials." };
   } catch (error) {
     console.error("Error logging in:", error);
     return { success: false, message: "An error occurred" };
