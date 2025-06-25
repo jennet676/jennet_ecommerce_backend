@@ -89,6 +89,7 @@ export async function getEmployerJobs(
     let query = "SELECT * FROM jobs WHERE 1=1";
     let values = [];
     let index = 1;
+    let limit = 40;
 
     // 1. Ilki employer_id boýunça filter
     if (employer_id) {
@@ -129,7 +130,7 @@ export async function getEmployerJobs(
       query += ` AND employment_type ILIKE $${index++}`;
       values.push(`${employment_type}%`);
     }
-    query += ` LIMIT 40 OFFSET 40 * (${page} - 1)`;
+    query += ` LIMIT ${limit} OFFSET ${limit} * (${page} - 1)`;
     const result = await db.query(query, values);
 
     if (result.rows.length === 0) {
@@ -147,7 +148,7 @@ export async function getEmployerJobs(
           await db.query(
             `SELECT COUNT(*) FROM jobs where employer_id = ${employer_id} `
           )
-        ).rows[0].count / 40
+        ).rows[0].count / limit
       ),
       total_results: (
         await db.query(
@@ -255,7 +256,15 @@ export async function deleteJob(jobId, employer_id) {
 
 export async function getApplyedUsers(jobId, employer_id, page = 1) {
   try {
-    // Ilki iş barlanýar
+
+
+console.log('employer id ',employer_id);
+
+
+    const limit = 40;
+    const offset = (page - 1) * limit;
+
+    // Ilki iş barlanýar we işiň eýesi barlanýar
     const jobResult = await db.query(
       "SELECT employer_id FROM jobs WHERE id = $1",
       [jobId]
@@ -268,19 +277,16 @@ export async function getApplyedUsers(jobId, employer_id, page = 1) {
       };
     }
 
-    const resultEmployerId = jobResult.rows[0].employer_id;
+    const jobOwnerId = jobResult.rows[0].employer_id;
 
-    if (resultEmployerId !== employer_id) {
+    if (jobOwnerId !== employer_id) {
       return {
         success: false,
-        message: "Diňe öz işiňe apply edenleri görüp bilýärsiň.",
+        message: "Bu iş size degişli däl.",
       };
     }
 
-    const limit = 40;
-    const offset = (page - 1) * limit;
-
-    // Apply edenleri al
+    // Apply eden ulanyjylary al
     const applyResult = await db.query(
       `SELECT users.username, favorite.applied_at 
        FROM favorite 
@@ -291,7 +297,7 @@ export async function getApplyedUsers(jobId, employer_id, page = 1) {
       [jobId, limit, offset]
     );
 
-    // Jemi sanawy al
+    // Jemi sanyny al
     const countResult = await db.query(
       `SELECT COUNT(*) FROM favorite WHERE job_id = $1`,
       [jobId]
@@ -299,17 +305,15 @@ export async function getApplyedUsers(jobId, employer_id, page = 1) {
 
     const totalCount = parseInt(countResult.rows[0].count);
 
-    const data = {
-      page,
-      results: applyResult.rows,
-      total_pages: Math.ceil(totalCount / limit),
-      total_results: totalCount,
-    };
-
     return {
       success: true,
       message: "Apply edenler üstünlikli alyndy.",
-      results: data,
+      results: {
+        page,
+        results: applyResult.rows,
+        total_pages: Math.ceil(totalCount / limit),
+        total_results: totalCount,
+      },
     };
   } catch (error) {
     console.error("Error getting applied users:", error);
@@ -319,3 +323,4 @@ export async function getApplyedUsers(jobId, employer_id, page = 1) {
     };
   }
 }
+

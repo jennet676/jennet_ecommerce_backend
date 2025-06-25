@@ -140,6 +140,7 @@ export const getAllOwnApplyedJobs = async (
   try {
     const values = [jobSeekerId];
     let index = 2;
+    let limit = 40;
 
     let baseWhere = `WHERE favorite.user_id = $1`;
     let filters = "";
@@ -187,7 +188,7 @@ export const getAllOwnApplyedJobs = async (
       FROM favorite 
       INNER JOIN jobs ON favorite.job_id = jobs.id 
       ${fullWhereClause}
-      LIMIT 40 OFFSET ${(page - 1) * 40}
+      LIMIT ${limit} OFFSET ${(page - 1) * (limit)}
     `;
     const result = await db.query(query, values);
 
@@ -207,7 +208,7 @@ export const getAllOwnApplyedJobs = async (
       data: {
         page,
         results: result.rows,
-        total_pages: Math.ceil(totalCount / 40) || 1,
+        total_pages: Math.ceil(totalCount / limit) || 1,
         total_results: totalCount || 0,
       },
     };

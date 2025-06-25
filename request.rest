@@ -3,10 +3,12 @@
 @employer = "employer"
 @serdar20_job_seeker_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJzZXJkYXIyMCIsInJvbGUiOiJqb2Jfc2Vla2VyIiwiaWF0IjoxNzUwNzQ5MTAwfQ.oK0uyR0cVkEOjHWWleSUQ9bBeY1cbkg2hRvo-l5aVJo
 @serdar23_employer_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsIm5hbWUiOiJzZXJkYXIyMyIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc1MDc0Nzc2NX0.Kn5Hjsaz5Cffyjp3druaJiqGJPirPze5TntKLI3cWoc
+@serdar24_employer_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzEsIm5hbWUiOiJzZXJkYXIyNCIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc1MDg1NTk5NX0.jk3igcBeCj9h7SFeQOIeUqfnlWMLK6fL6VwPn03TSNU
+
 @serdar25_job_seeker_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzIsIm5hbWUiOiJzZXJkYXIyNSIsInJvbGUiOiJqb2Jfc2Vla2VyIiwiaWF0IjoxNzUwNzUwMzE5fQ.MAjOTK6KXq80iNzfy9uS5Pqnq7sBbw_U6okRKiwaF08
 @serdar27_job_seeker_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsIm5hbWUiOiJzZXJkYXIyNyIsInJvbGUiOiJqb2Jfc2Vla2VyIiwiaWF0IjoxNzUwNzUwNDAyfQ.bR1-aEVXqrGZKhyN5QyLy5pT-D0q_omkcDtZWlu9nQs
 @serdar28_job_seeker_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzQsIm5hbWUiOiJzZXJkYXIyOCIsInJvbGUiOiJqb2Jfc2Vla2VyIiwiaWF0IjoxNzUwODI4NzAxfQ.ACjTMxpmP105e-K-FDrEsZio5dHS7JR0I_w7Lb9ssfY
-
+@ADMIN1_TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzUsIm5hbWUiOiJBRE1JTjEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTA4Mzc2MDR9.c4P088P7sWo7CfQtK6AmoOuw5_UqjPbF5psGzdy9ycM
 
 ##############################################
 ############### SIGN UP/ LOGIN ###############
@@ -15,9 +17,9 @@ POST {{baseUrlAUTH}}/auth/api/signup
 Content-Type: application/json
 
 {
-    "username": "serdar28",
+    "username": "ADMIN1",
     "password": "121212121",
-    "role": "job_seeker"
+    "role": "admin"
 }
 
 //✅username unique
@@ -27,9 +29,9 @@ POST {{baseUrlAUTH}}/auth/api/login
 Content-Type: application/json
 
 {
-    "username": "serdar28",
+    "username": "serdar24",
     "password": "121212121",
-    "role": "job_seeker"
+    "role": "employer"
 }
 //✅login
 ############################################
@@ -39,10 +41,10 @@ Content-Type: application/json
 
 POST {{baseUrlSERVER}}/jobs/api/employer/create-job
 Content-Type: application/json
-Authorization: Bearer {{serdar23_employer_token}}
+Authorization: Bearer {{serdar24_employer_token}}
 
 {
-    "title": "frontend1",
+    "title": "5555",
     "description": "description",
     "company": "company",
     "location": "location",
@@ -100,12 +102,12 @@ Authorization: Bearer {{serdar23_employer_token}}
 //✅job delete edýär;-egerde favorite edilen bolsa düýbünden pozmak nädogry-favorite-de eýýäm ol maglumat ulanylýär we .. şonuň üçin  is_active=false etmeli
 
 ###
-GET {{baseUrlSERVER}}/jobs/api/employer/applyed-users/432
-Content-Type: application/json
+GET {{baseUrlSERVER}}/jobs/api/employer/applyed-users/433
 Authorization: Bearer {{serdar23_employer_token}}
 //✅job_seeker-leri görüp bilýär
 //✅-pagination
 //✅sortlamak wagt goşmalymyka onda?-soňky apply edenler diýip
+//✅page=2✅
 
 //serdar7 job goşmaly soňra şol işe ikisi apply etmelimi?
 
@@ -114,17 +116,18 @@ Authorization: Bearer {{serdar23_employer_token}}
 #############################################
 ############# jobSeeker ACTIONS #############
 #############################################
-GET {{baseUrlSERVER}}/jobs/api/job-seeker/jobs
+GET {{baseUrlSERVER}}/jobs/api/job-seeker/jobs?page=2
 //✅job-seeker  job-lary görýär;
 //✅pagination
 //✅filter
+//✅page=2✅
 
 
 ###
 GET {{baseUrlSERVER}}/jobs/api/job-seeker/jobs/432
 //✅220 id-li işi görüp bilýär
 ###
-POST {{baseUrlSERVER}}/jobs/api/job-seeker/applying-job/431
+POST {{baseUrlSERVER}}/jobs/api/job-seeker/applying-job/428
 Content-Type: application/json
 Authorization: Bearer {{serdar25_job_seeker_token}}
 
@@ -134,7 +137,7 @@ Authorization: Bearer {{serdar25_job_seeker_token}}
 
 ###
 GET {{baseUrlSERVER}}/jobs/api/job-seeker/get-all-applyed-jobs
-Authorization: Bearer {{serdar25_job_seeker_token}}
+Authorization: Bearer {{serdar27_job_seeker_token}}
 
 //✅user ähli apply eden işlerini görüp bilýär
 //✅pagination
@@ -148,6 +151,13 @@ Authorization: Bearer {{serdar25_job_seeker_token}}
 //✅apply edilen işi delete edip bilýärmi?
 
 
+
+#############################################
+################### ADMIN ###################
+#############################################
+# GET {{baseUrlSERVER}}/admin/api/jobs
+# Authorization: Bearer {{ADMIN1_TOKEN}}
+//❌filter -title,username,...
 #############################################
 #################### END ####################
 #############################################

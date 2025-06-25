@@ -16,7 +16,7 @@ export const create = async (req, res) => {
     category,
     salary_range,
     employment_type,
-    is_active
+    is_active,
   } = req.body;
   const employer_id = req.user.user_id;
   const role = req.user.role;
@@ -47,7 +47,7 @@ export const create = async (req, res) => {
 
 export const employerJobs = async (req, res) => {
   const employer_id = req.user.user_id;
-  const page = req.query.page;
+  const page = req.query.page||1;
   const title = req.query.title;
   const description = req.query.description;
   const active = req.query.active;
@@ -140,11 +140,11 @@ export const deleteEmployerJob = async (req, res) => {
 };
 export const applyedUsers = async (req, res) => {
   const jobId = req.params.id;
-  const employerId = req.user.employer_id;
-  let page = req.params.page;
+  const employerId = req.user.user_id;
+  const page = req.query.page || 1;
 
   try {
-    const result = await getApplyedUsers(jobId, employerId,page=1);
+    const result = await getApplyedUsers(jobId, employerId, page);
 
     if (result.success) {
       res.status(200).json(result);

@@ -7,7 +7,7 @@ import {
 } from "../services/jobSeekerService.js";
 
 export const jobSeekerJobs = async (req, res) => {
-  const { page } = req.query;
+  const page = req.query.page || 1;
 
   const title = req.query.title;
   const description = req.query.description;
@@ -53,7 +53,7 @@ export const getAllApplyedJobs = async (req, res) => {
   const jobSeekerId = req.user.user_id;
   //  ähli apply eden işlerini
 
-  const page = req.query.page;
+  const page = req.query.page||1;
   const title = req.query.title;
   const description = req.query.description;
   let active = req.query.active;
@@ -63,14 +63,18 @@ export const getAllApplyedJobs = async (req, res) => {
   const salary_range = req.query.salary_range;
   const employment_type = req.query.employment_type;
 
-  const result = await getAllOwnApplyedJobs(jobSeekerId,page,title,
+  const result = await getAllOwnApplyedJobs(
+    jobSeekerId,
+    page,
+    title,
     description,
-    active=true,
+    (active = true),
     company,
     location,
     category,
     salary_range,
-    employment_type);
+    employment_type
+  );
 
   if (result.success) {
     res.status(201).json(result);
