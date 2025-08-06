@@ -2,16 +2,11 @@ import jwt from "jsonwebtoken";
 import { loginUser, signupUser } from "../services/authService.js";
 
 export const login = (req, res) => {
-  const { username, password, role } = req.body;
+  const { username, password } = req.body;
+  const role = "customer";
 
   loginUser(username, password, role).then((result) => {
     if (result.success) {
-      // return res.status(200).json({
-      //   message: "Login successful",
-      //   token: result.token,
-      //   userDetails: result.details,
-      // });
-
       return res.status(200).json(result);
     } else {
       return res.status(401).json(result);
@@ -20,7 +15,10 @@ export const login = (req, res) => {
 };
 export const signup = (req, res) => {
   // registrasiýa etýän service bar
-  const { username, password, role } = req.body;
+
+  console.log('salam sen register bolumde!')
+  const { username, password } = req.body;
+  const role = "customer";
   console.log("req body:", req.body);
 
   console.log("username barmy :", username);
